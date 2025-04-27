@@ -1,20 +1,23 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-"""
-@Project ：web-fast 
-@File    ：main.py
-@IDE     ：PyCharm 
-@Author  ：lu.yu
-@Date    ：4/10/2025 9:50 AM 
-"""
-from tortoise.contrib.fastapi import register_tortoise
 from fastapi import FastAPI
+from .config.settings import settings
 
-def init_db(app: FastAPI):
-    register_tortoise(
-        app,
-        db_url="sqlite://db.sqlite3",
-        modules={"models": ["app.models.user"]},
-        generate_schemas=True,
-        add_exception_handlers=True,
-    )
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    debug=settings.DEBUG
+)
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+@app.get("/config")
+async def get_config():
+    return {
+        "app_name": settings.APP_NAME,
+        "app_version": settings.APP_VERSION,
+        "database_url": settings.DATABASE_URL,
+        "debug": settings.DEBUG
+    }
